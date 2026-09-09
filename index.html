@@ -2,82 +2,87 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNAKE & LADDER - Dark Neon Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SNAKE & LADDER - Realistic Dark Edition</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        html, body {
+            height: 100%;
+            max-height: 100vh;
+            overflow: hidden;
+            background: #0d0f17;
+            color: #fff;
+            touch-action: manipulation;
+        }
+
         body { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
-            min-height: 100vh; 
-            background: #0f0f15; 
-            color: #fff; 
-            padding: 10px;
+            justify-content: space-between; 
+            padding: 6px;
         }
 
         .title { 
-            font-size: 2.2rem; 
+            font-size: 1.4rem; 
             font-weight: 900;
-            margin-bottom: 8px; 
-            background: linear-gradient(135deg, #00F2FE, #4FACFE, #00C6FF);
+            background: linear-gradient(135deg, #00F2FE, #4FACFE);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-align: center;
         }
 
         .scoreboard {
             display: flex;
-            gap: 16px;
-            margin-bottom: 10px;
-            background: #1a1c23;
-            padding: 8px 20px;
-            border-radius: 20px;
+            gap: 12px;
+            background: #1a1c25;
+            padding: 4px 14px;
+            border-radius: 12px;
             border: 1px solid #2a2d3d;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .score-box { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; }
-        .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
-        .dot.player { background: #ffd700; box-shadow: 0 0 8px #ffd700; }
-        .dot.ai { background: #ff007f; box-shadow: 0 0 8px #ff007f; }
+        .score-box { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.8rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot.player { background: #ffd700; box-shadow: 0 0 6px #ffd700; }
+        .dot.ai { background: #ff007f; box-shadow: 0 0 6px #ff007f; }
 
         .tips-box {
-            font-size: 0.9rem;
-            margin-bottom: 12px;
+            font-size: 0.78rem;
             color: #ffd700;
             font-weight: 600;
-            min-height: 38px;
+            height: 28px;
             text-align: center;
-            padding: 6px 14px;
+            padding: 2px 10px;
             background: rgba(255, 215, 0, 0.08);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 215, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            max-width: 360px;
-            width: 100%;
+            width: min(340px, 94vw);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* 60 Tile Board Container */
+        /* Responsive Fits Single Mobile Screen */
         .board-container {
             position: relative;
-            width: 360px;
-            height: 600px; /* 6 cols x 10 rows (each 60px x 60px) */
-            background: #1e2230;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 3px solid #3a3f58;
+            width: min(340px, 92vw);
+            height: min(450px, 58vh);
+            background: #161925;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            border: 2px solid #2e344d;
             overflow: hidden;
         }
 
         .board-grid {
             display: grid;
-            grid-template-columns: repeat(6, 60px);
-            grid-template-rows: repeat(10, 60px);
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(10, 1fr);
             width: 100%;
             height: 100%;
         }
@@ -87,29 +92,28 @@
             display: flex;
             align-items: flex-start;
             justify-content: flex-start;
-            padding: 4px 6px;
-            font-size: 0.8rem;
+            padding: 2px 4px;
+            font-size: 0.7rem;
             font-weight: bold;
-            color: #8e95b0;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #6b7280;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .tile.even { background-color: #232838; }
-        .tile.odd { background-color: #1a1e2b; }
+        .tile.even { background-color: #1a1e2d; }
+        .tile.odd { background-color: #141724; }
         
-        /* Special Tiles based on image logic */
-        .tile.start-tile { background-color: #b45309 !important; color: #fff; } /* Yellow Tile 1 */
-        .tile.bin-tile { background-color: #1e3a8a !important; color: #38bdf8; } /* Blue Tile */
-        .tile.dice-tile { background-color: #881337 !important; color: #fda4af; } /* Red Tile */
-        .tile.win-tile { background-color: #065f46 !important; color: #34d399; }
+        .tile.start-tile { background-color: #7c2d12 !important; color: #ffedd5; }
+        .tile.bin-tile { background-color: #1e3a8a !important; color: #93c5fd; }
+        .tile.dice-tile { background-color: #881337 !important; color: #fecdd3; }
+        .tile.win-tile { background-color: #064e3b !important; color: #a7f3d0; }
 
         .tile-icon {
             position: absolute;
-            bottom: 3px;
-            right: 4px;
-            font-size: 1.1rem;
+            bottom: 2px;
+            right: 2px;
+            font-size: 0.85rem;
         }
 
-        /* Overlay SVG for Vector Snakes & Golden Ladders */
+        /* SVG for Realistic Snakes & Ladders */
         .svg-overlay {
             position: absolute;
             top: 0;
@@ -123,73 +127,73 @@
         /* Player Tokens */
         .piece {
             position: absolute;
-            width: 26px;
-            height: 26px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.8);
+            transition: all 0.22s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 5;
-            border: 2px solid #fff;
+            border: 1.5px solid #fff;
         }
         .piece.player { background: radial-gradient(circle, #ffd700, #b8860b); color: #000; }
         .piece.ai { background: radial-gradient(circle, #ff007f, #8b0042); color: #fff; }
 
-        /* Controls & Dice */
+        /* Controls & Realistic Dice Layout */
         .controls {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-top: 15px;
+            gap: 16px;
+            margin-bottom: 4px;
         }
 
         .dice-3d {
-            width: 64px;
-            height: 64px;
+            width: 52px;
+            height: 52px;
             background: linear-gradient(145deg, #ffffff, #e6e6e6);
-            border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.5), inset 0 2px 2px rgba(255,255,255,0.8);
+            border-radius: 12px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.6), inset 0 2px 2px rgba(255,255,255,0.9);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            padding: 8px;
+            padding: 6px;
             cursor: pointer;
             transition: transform 0.15s;
         }
-        .dice-3d:active { transform: scale(0.92); }
-        .dice-3d.rolling { animation: spin 0.5s ease-in-out infinite; }
+        .dice-3d:active { transform: scale(0.9); }
+        .dice-3d.rolling { animation: spin 0.4s ease-in-out infinite; }
 
         .pip {
-            background-color: #111;
+            background-color: #1e1b18;
             border-radius: 50%;
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             margin: auto;
             display: none;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,0.8);
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
+            50% { transform: rotate(180deg) scale(1.08); }
             100% { transform: rotate(360deg) scale(1); }
         }
 
         .btn-reset {
-            padding: 10px 18px;
-            font-size: 0.85rem;
+            padding: 8px 14px;
+            font-size: 0.8rem;
             font-weight: bold;
-            background: #2a2d3d;
-            color: #aaa;
-            border: 1px solid #444;
-            border-radius: 10px;
+            background: #252836;
+            color: #bbb;
+            border: 1px solid #3d4257;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .btn-reset:hover { background: #3a3f54; color: #fff; }
+        .btn-reset:hover { background: #32364a; color: #fff; }
     </style>
 </head>
 <body>
@@ -205,7 +209,13 @@
 
     <div class="board-container">
         <div class="board-grid" id="boardGrid"></div>
-        <svg class="svg-overlay" id="svgOverlay"></svg>
+        <svg class="svg-overlay" id="svgOverlay">
+            <defs>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
+                </filter>
+            </defs>
+        </svg>
         
         <!-- Player Tokens -->
         <div class="piece player" id="playerPiece">🟡</div>
@@ -226,7 +236,6 @@
         const ROWS = 10;
         const TOTAL_TILES = 60;
 
-        // Ladders, Snakes, Bins & Extra Turn Tiles
         const LADDERS = { 5: 18, 12: 28, 22: 39, 34: 54, 41: 57 };
         const SNAKES = { 24: 8, 37: 15, 46: 25, 53: 31, 58: 38 };
         const BINS = [19, 44];
@@ -239,13 +248,14 @@
         let playerSkipTurn = false;
         let aiSkipTurn = false;
 
+        // Standard Dice Layout Mapping
         const pipLayouts = {
             1: [5],
             2: [3, 7],
             3: [3, 5, 7],
             4: [1, 3, 7, 9],
             5: [1, 3, 5, 7, 9],
-            6: [1, 3, 4, 6, 7, 9]
+            6: [1, 3, 4, 6, 7, 9] // 2 columns of 3 dots
         };
 
         function showDiceValue(val) {
@@ -273,9 +283,13 @@
         }
 
         function getTileCenterPixel(tileNum) {
+            let container = document.querySelector('.board-container');
+            let w = container.clientWidth;
+            let h = container.clientHeight;
+
             let { row, col } = getTileCoords(tileNum);
-            let tileWidth = 360 / COLS;
-            let tileHeight = 600 / ROWS;
+            let tileWidth = w / COLS;
+            let tileHeight = h / ROWS;
 
             return {
                 x: col * tileWidth + tileWidth / 2,
@@ -303,7 +317,6 @@
 
                     tile.innerText = tileNum;
 
-                    // Icons
                     const iconSpan = document.createElement("span");
                     iconSpan.classList.add("tile-icon");
                     if (BINS.includes(tileNum)) iconSpan.innerText = "🗑️";
@@ -314,16 +327,24 @@
                     gridElem.appendChild(tile);
                 }
             }
-            drawGraphics();
-            updatePiecePositions();
+            setTimeout(() => {
+                drawGraphics();
+                updatePiecePositions();
+            }, 50);
             showDiceValue(5);
         }
 
         function drawGraphics() {
             const svg = document.getElementById("svgOverlay");
-            svg.innerHTML = "";
+            // Preserve Defs
+            const defsHtml = `<defs>
+                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.6"/>
+                </filter>
+            </defs>`;
+            svg.innerHTML = defsHtml;
 
-            // Golden Ladders
+            // Draw 3D Wooden Ladders with Shadow
             for (let start in LADDERS) {
                 let p1 = getTileCenterPixel(parseInt(start));
                 let p2 = getTileCenterPixel(LADDERS[start]);
@@ -333,25 +354,28 @@
                 let angle = Math.atan2(dy, dx);
                 let pAngle = angle + Math.PI / 2;
 
-                let offset = 9;
+                let offset = 7;
                 let rx1 = p1.x + offset * Math.cos(pAngle), ry1 = p1.y + offset * Math.sin(pAngle);
                 let rx2 = p2.x + offset * Math.cos(pAngle), ry2 = p2.y + offset * Math.sin(pAngle);
                 let lx1 = p1.x - offset * Math.cos(pAngle), ly1 = p1.y - offset * Math.sin(pAngle);
                 let lx2 = p2.x - offset * Math.cos(pAngle), ly2 = p2.y - offset * Math.sin(pAngle);
 
-                // Side Rails
+                let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("filter", "url(#shadow)");
+
+                // Side Rails (Thick Yellow Wood)
                 [ [rx1, ry1, rx2, ry2], [lx1, ly1, lx2, ly2] ].forEach(([x1,y1,x2,y2]) => {
                     let rail = document.createElementNS("http://www.w3.org/2000/svg", "line");
                     rail.setAttribute("x1", x1); rail.setAttribute("y1", y1);
                     rail.setAttribute("x2", x2); rail.setAttribute("y2", y2);
-                    rail.setAttribute("stroke", "#ffd700");
+                    rail.setAttribute("stroke", "#eab308");
                     rail.setAttribute("stroke-width", "4");
                     rail.setAttribute("stroke-linecap", "round");
-                    svg.appendChild(rail);
+                    g.appendChild(rail);
                 });
 
                 // Rungs
-                let steps = 5;
+                let steps = 6;
                 for (let i = 1; i < steps; i++) {
                     let t = i / steps;
                     let rungX1 = lx1 + t * (lx2 - lx1);
@@ -362,13 +386,14 @@
                     let rung = document.createElementNS("http://www.w3.org/2000/svg", "line");
                     rung.setAttribute("x1", rungX1); rung.setAttribute("y1", rungY1);
                     rung.setAttribute("x2", rungX2); rung.setAttribute("y2", rungY2);
-                    rung.setAttribute("stroke", "#f59e0b");
+                    rung.setAttribute("stroke", "#fde047");
                     rung.setAttribute("stroke-width", "3");
-                    svg.appendChild(rung);
+                    g.appendChild(rung);
                 }
+                svg.appendChild(g);
             }
 
-            // Green Snakes
+            // Draw Realistic Green Snakes with Curves, Head, Eyes & Tongue
             for (let start in SNAKES) {
                 let head = getTileCenterPixel(parseInt(start));
                 let tail = getTileCenterPixel(SNAKES[start]);
@@ -376,31 +401,61 @@
                 let midX = (head.x + tail.x) / 2 + (head.x > tail.x ? 25 : -25);
                 let midY = (head.y + tail.y) / 2;
 
-                // Snake Body
+                let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("filter", "url(#shadow)");
+
+                // Outer Snake Body Curve
                 let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 let d = `M ${head.x} ${head.y} Q ${midX} ${midY} ${tail.x} ${tail.y}`;
                 path.setAttribute("d", d);
-                path.setAttribute("stroke", "#10b981");
-                path.setAttribute("stroke-width", "10");
+                path.setAttribute("stroke", "#22c55e");
+                path.setAttribute("stroke-width", "9");
                 path.setAttribute("fill", "none");
                 path.setAttribute("stroke-linecap", "round");
-                svg.appendChild(path);
+                g.appendChild(path);
+
+                // Inner Pattern Line
+                let innerPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                innerPath.setAttribute("d", d);
+                innerPath.setAttribute("stroke", "#86efac");
+                innerPath.setAttribute("stroke-width", "3");
+                innerPath.setAttribute("fill", "none");
+                innerPath.setAttribute("stroke-dasharray", "4,4");
+                g.appendChild(innerPath);
 
                 // Snake Head
-                let headElem = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                headElem.setAttribute("cx", head.x);
-                headElem.setAttribute("cy", head.y);
-                headElem.setAttribute("r", "8");
-                headElem.setAttribute("fill", "#047857");
-                svg.appendChild(headElem);
+                let headCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                headCircle.setAttribute("cx", head.x);
+                headCircle.setAttribute("cy", head.y);
+                headCircle.setAttribute("r", "7");
+                headCircle.setAttribute("fill", "#15803d");
+                g.appendChild(headCircle);
 
-                // Snake Eye
-                let eye = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                eye.setAttribute("cx", head.x - 2);
-                eye.setAttribute("cy", head.y - 2);
-                eye.setAttribute("r", "2");
-                eye.setAttribute("fill", "#ffffff");
-                svg.appendChild(eye);
+                // Snake Eyes
+                let eye1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                eye1.setAttribute("cx", head.x - 2);
+                eye1.setAttribute("cy", head.y - 2);
+                eye1.setAttribute("r", "1.8");
+                eye1.setAttribute("fill", "#fff");
+
+                let pupil = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                pupil.setAttribute("cx", head.x - 2);
+                pupil.setAttribute("cy", head.y - 2);
+                pupil.setAttribute("r", "0.8");
+                pupil.setAttribute("fill", "#000");
+
+                g.appendChild(eye1);
+                g.appendChild(pupil);
+
+                // Red Forked Tongue
+                let tongue = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                tongue.setAttribute("x1", head.x); tongue.setAttribute("y1", head.y);
+                tongue.setAttribute("x2", head.x - 5); tongue.setAttribute("y2", head.y - 5);
+                tongue.setAttribute("stroke", "#ef4444");
+                tongue.setAttribute("stroke-width", "1.5");
+                g.appendChild(tongue);
+
+                svg.appendChild(g);
             }
         }
 
@@ -412,11 +467,11 @@
             const aPiece = document.getElementById("aiPiece");
 
             let sameTile = playerPos === aiPos;
-            pPiece.style.left = `${p1.x - 13 - (sameTile ? 7 : 0)}px`;
-            pPiece.style.top = `${p1.y - 13}px`;
+            pPiece.style.left = `${p1.x - 10 - (sameTile ? 5 : 0)}px`;
+            pPiece.style.top = `${p1.y - 10}px`;
 
-            aPiece.style.left = `${p2.x - 13 + (sameTile ? 7 : 0)}px`;
-            aPiece.style.top = `${p2.y - 13}px`;
+            aPiece.style.left = `${p2.x - 10 + (sameTile ? 5 : 0)}px`;
+            aPiece.style.top = `${p2.y - 10}px`;
 
             document.getElementById("playerPosText").innerText = playerPos;
             document.getElementById("aiPosText").innerText = aiPos;
@@ -432,7 +487,7 @@
             for (let i = 0; i < 6; i++) {
                 rollVal = Math.floor(Math.random() * 6) + 1;
                 showDiceValue(rollVal);
-                await sleep(70);
+                await sleep(60);
             }
 
             diceElem.classList.remove("rolling");
@@ -445,32 +500,32 @@
 
             if (playerSkipTurn) {
                 playerSkipTurn = false;
-                setTip("🗑️ පසුගිය වාරයේ Bin එකට වැටුණු නිසා ඔබේ වාරය අහිමි විය!");
-                await sleep(1400);
+                setTip("🗑️ Bin එක නිසා වාරය අහිමි විය!");
+                await sleep(1300);
                 isPlayerTurn = false;
                 isBusy = false;
                 aiTurn();
                 return;
             }
 
-            setTip("🎲 දාදු කැටය කැරකෙමින් පවතී...");
+            setTip("🎲 දාදු කැටය කැරකේ...");
             let roll = await rollDiceAnimation();
 
             setTip(`ඔබට ${roll} ක් වැටුණා!`);
-            await sleep(300);
+            await sleep(250);
 
             let won = await movePlayerStepByStep('player', roll);
             if (won) return;
 
             if (roll === 6) {
-                setTip("🎲 6 වැටුණා! ඔබට තවත් වාරයක් හිමිවේ!");
+                setTip("🎲 6 වැටුණා! තවත් වාරයක් හිමිවේ!");
                 isBusy = false;
                 return;
             }
 
             isPlayerTurn = false;
             isBusy = false;
-            setTimeout(aiTurn, 1200);
+            setTimeout(aiTurn, 1100);
         }
 
         async function aiTurn() {
@@ -480,7 +535,7 @@
             if (aiSkipTurn) {
                 aiSkipTurn = false;
                 setTip("🤖 Notiya ගේ වාරය Bin එක නිසා අහිමි විය!");
-                await sleep(1400);
+                await sleep(1300);
                 isPlayerTurn = true;
                 isBusy = false;
                 setTip("ඔබේ වාරය! දාදු කැටය Touch කරන්න.");
@@ -488,19 +543,19 @@
             }
 
             setTip("🤖 Notiya සිතමින් දාදු කැටය කරකවයි...");
-            await sleep(1000);
+            await sleep(900);
 
             let roll = await rollDiceAnimation();
             setTip(`Notiya ට ${roll} ක් වැටුණා!`);
-            await sleep(300);
+            await sleep(250);
 
             let won = await movePlayerStepByStep('ai', roll);
             if (won) return;
 
             if (roll === 6) {
-                setTip("🎲 Notiya ට 6 වැටුණා! Notiya ට නැවත වාරයක් හිමිවේ!");
+                setTip("🎲 Notiya ට 6 වැටුණා! අමතර වාරයක් හිමිවේ!");
                 isBusy = false;
-                setTimeout(aiTurn, 1200);
+                setTimeout(aiTurn, 1100);
                 return;
             }
 
@@ -520,58 +575,54 @@
                 else aiPos = current;
 
                 updatePiecePositions();
-                await sleep(200);
+                await sleep(180);
             }
 
             if (current === TOTAL_TILES) {
                 if (who === 'player') {
-                    setTip("🏆 සුබ පැතුම්! ඔබ තරඟය ජයග්‍රහණය කළා! 🎉");
+                    setTip("🏆 ජයග්‍රහණය කළා! 🎉");
                 } else {
-                    setTip("🤖 Notiya ජයග්‍රහණය කළා! නැවත උත්සාහ කරන්න.");
+                    setTip("🤖 Notiya ජයග්‍රහණය කළා!");
                 }
                 isBusy = true;
                 return true;
             }
 
-            // Check Ladder
             if (LADDERS[current]) {
-                await sleep(250);
-                setTip(who === 'player' ? "🪜 නියමයි! ඉනිමඟෙන් උඩට නැඟුණා!" : "🪜 Notiya ඉනිමඟෙන් උඩට නැඟුණා!");
+                await sleep(200);
+                setTip(who === 'player' ? "🪜 ඉනිමඟෙන් උඩට නැඟුණා!" : "🪜 Notiya උඩට නැඟුණා!");
                 current = LADDERS[current];
                 if (who === 'player') playerPos = current;
                 else aiPos = current;
                 updatePiecePositions();
-                await sleep(400);
+                await sleep(350);
             }
-            // Check Snake
             else if (SNAKES[current]) {
-                await sleep(250);
-                setTip(who === 'player' ? "🐍 අපොයි! නයාට අසුවී පහළට වැටුණා!" : "🐍 Notiya නයාට අසුවී පහළට වැටුණා!");
+                await sleep(200);
+                setTip(who === 'player' ? "🐍 නයාට අසුවී පහළට වැටුණා!" : "🐍 Notiya පහළට වැටුණා!");
                 current = SNAKES[current];
                 if (who === 'player') playerPos = current;
                 else aiPos = current;
                 updatePiecePositions();
-                await sleep(400);
+                await sleep(350);
             }
-            // Check Bin
             else if (BINS.includes(current)) {
-                await sleep(250);
-                setTip(who === 'player' ? "🗑️ Bin එකට වැටුණා! ඔබේ මීළඟ වාරය අහිමි වේ." : "🗑️ Notiya Bin එකට වැටුණා! Notiya ගේ මීළඟ වාරය අහිමි වේ.");
+                await sleep(200);
+                setTip("🗑️ Bin එක නිසා මීළඟ වාරය අහිමි වේ.");
                 if (who === 'player') playerSkipTurn = true;
                 else aiSkipTurn = true;
-                await sleep(400);
+                await sleep(350);
             }
-            // Check Extra Dice Tile
             else if (EXTRA_DICE.includes(current)) {
-                await sleep(250);
-                setTip(who === 'player' ? "🎲 Dice කොටුවට ආවා! ඔබට තවත් අමතර වාරයක් හිමිවේ!" : "🎲 Notiya Dice කොටුවට ආවා! Notiya ට අමතර වාරයක් හිමිවේ!");
-                await sleep(500);
+                await sleep(200);
+                setTip("🎲 Dice කොටුව නිසා අමතර වාරයක් හිමිවේ!");
+                await sleep(450);
                 if (who === 'player') {
                     isBusy = false;
-                    return true; // Keep player turn
+                    return true;
                 } else {
                     isBusy = false;
-                    setTimeout(aiTurn, 1200);
+                    setTimeout(aiTurn, 1100);
                     return true;
                 }
             }
@@ -595,8 +646,11 @@
             showDiceValue(5);
         }
 
-        window.addEventListener('resize', drawGraphics);
+        window.addEventListener('resize', () => {
+            drawGraphics();
+            updatePiecePositions();
+        });
         createBoard();
     </script>
 </body>
-    </html>
+</html>
